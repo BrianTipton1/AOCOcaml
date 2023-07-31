@@ -1,0 +1,5 @@
+(executable
+ (public_name DayOne)
+ (preprocess (pps ppx_deriving.show))
+ (libraries DayOne re ppx_deriving)
+ (name main))
