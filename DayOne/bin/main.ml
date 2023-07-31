@@ -24,7 +24,13 @@ let read_file filename =
   close_in ic;
   Str.split (Str.regexp "\n") content
 
-type elf = { num : int; itemCosts : int list; costSum : int } [@@deriving show]
+type elf = {
+  num : int;
+  itemCosts : int list;
+  costSum : int;
+      [@printer fun fmt -> fprintf fmt "Sum:%d"]
+}
+[@@deriving show ]
 
 let parseString x = try Some (int_of_string x) with _failure -> None
 let mapVals = List.map parseString
@@ -34,7 +40,7 @@ let isEmpty = function
   | x :: rest when x = None -> Some rest
   | x -> Some x
 
-let elves (xs : string list) =
+let elfs_of_strings (xs : string list) =
   let vals = mapVals xs in
   let rec getNext result remain =
     match remain with
@@ -46,14 +52,14 @@ let elves (xs : string list) =
     | Some x ->
         let newres, newremain = getNext [] x in
         getAll (List.append result [ newres ]) newremain
-    | None -> (result, remain)
+    | None -> result
   in
-  let toElf ns i =
+  let toElf i ns =
     { costSum = List.fold_left ( + ) 0 ns; itemCosts = ns; num = i + 1 }
   in
 
-  let fin, _ = getAll [] (Some vals) in
-  List.mapi (fun acc x -> toElf x acc) fin
+  let fin = getAll [] (Some vals) in
+  List.mapi (fun acc x -> toElf acc x) fin
 
 let findElf elfs =
   let rec getMax currMax elfs =
@@ -63,8 +69,8 @@ let findElf elfs =
         getMax m rest
     | _ -> currMax
   in
-  getMax { num = 0; itemCosts = []; costSum = 0 } elfs
+  getMax (List.hd elfs) elfs
 
 let () =
   let lines = read_file "input.txt" in
-  elves lines |> findElf |> show_elf |> print_string
+  elfs_of_strings lines |> findElf |> show_elf |> print_string
