@@ -1,4 +1,18 @@
-type elf = { elfNumber : int; _allCalories : int list; calorieSum : int }
+open Ppx_compare_lib.Builtin
+
+type elf = {
+  elfNumber : (int[@compare.ignore]);
+  _allCalories : (int list[@compare.ignore]);
+  calorieSum : (int[@compare]);
+}
+[@@deriving compare]
+
+let rec take n lst =
+  match n, lst with
+  | 0, _ | _, [] -> []
+  | _, x :: xs -> x :: take (n - 1) xs
+
+(* let findMaxNCalorieCarriers n elves = List.sort elves *)
 
 let findMaxCalories elfs =
   let rec getMax currMax elfs =

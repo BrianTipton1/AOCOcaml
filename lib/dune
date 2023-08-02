@@ -1,3 +1,4 @@
 (library
  (name AOCOCaml)
- (libraries re))
+ (preprocess (pps ppx_deriving.show ppx_compare))
+ (libraries re ppx_deriving ppx_compare))
